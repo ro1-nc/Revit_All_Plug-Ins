@@ -56,6 +56,7 @@ namespace Revit_ass_1
             all_details.Add(a);
             all_details.Add("Width :" + b);
             all_details.Add("Length :" + c);
+            
             //foreach (PropertyInfo prop in etype.GetType().GetProperties())
             //{
             //    try
