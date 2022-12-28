@@ -42,46 +42,51 @@ namespace Revit_ass_1
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-
-            UIDocument uidoc = commandData.Application.ActiveUIDocument;
-            Document doc = uidoc.Document;
-
-            FilteredElementCollector collector = new FilteredElementCollector(doc);
-            ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Levels);
-
-            ElementCategoryFilter filter2 = new ElementCategoryFilter(BuiltInCategory.OST_Views);
-
-           
-            IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
-
-            string name = ((Autodesk.Revit.DB.Level)floors[1]).Name;
-            double x = ((Autodesk.Revit.DB.Level)floors[1]).Elevation;
-            double y = ((Autodesk.Revit.DB.Level)floors[1]).ProjectElevation;
-
-
-
-            List<string> all_details = new List<string>();
-            for (int i = 0; i < floors.Count; i++)
+            try
             {
-                string level_name = "Level Name : " + floors[i].Name;
-                string elevation = "        Elevation : " + ((Autodesk.Revit.DB.Level)floors[i]).Elevation;
-                string proj_elevation = "      Project Elevation : " + ((Autodesk.Revit.DB.Level)floors[i]).ProjectElevation;
-                all_details.Add(level_name);
-                all_details.Add(elevation);
-                all_details.Add(proj_elevation);
+
+                UIDocument uidoc = commandData.Application.ActiveUIDocument;
+                Document doc = uidoc.Document;
+
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Levels);
+
+                ElementCategoryFilter filter2 = new ElementCategoryFilter(BuiltInCategory.OST_Views);
+
+
+                IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+
+                string name = ((Autodesk.Revit.DB.Level)floors[1]).Name;
+                double x = ((Autodesk.Revit.DB.Level)floors[1]).Elevation;
+                double y = ((Autodesk.Revit.DB.Level)floors[1]).ProjectElevation;
+
+
+
+                List<string> all_details = new List<string>();
+                for (int i = 0; i < floors.Count; i++)
+                {
+                    string level_name = "Level Name : " + floors[i].Name;
+                    string elevation = "        Elevation : " + ((Autodesk.Revit.DB.Level)floors[i]).Elevation;
+                    string proj_elevation = "      Project Elevation : " + ((Autodesk.Revit.DB.Level)floors[i]).ProjectElevation;
+                    all_details.Add(level_name);
+                    all_details.Add(elevation);
+                    all_details.Add(proj_elevation);
+                }
+
+                var message1 = string.Join(Environment.NewLine, all_details);
+
+                var duplicate = doc.GetElement(floors[1].Id);
+
+                UserControl1 wpf = new UserControl1();
+                wpf.Output.Text = message1;
+                wpf.Show();
+
+
+                //MessageBox.Show(message1,"Level Information");
             }
-
-            var message1 = string.Join(Environment.NewLine, all_details);
-
-            var duplicate = doc.GetElement(floors[1].Id);
-
-            UserControl1 wpf = new UserControl1();
-            wpf.Output.Text = message1;
-            wpf.Show();
-
-
-            //MessageBox.Show(message1,"Level Information");
-
+            catch (Exception ex)
+            {
+            }
             return Result.Succeeded;
         }
     }

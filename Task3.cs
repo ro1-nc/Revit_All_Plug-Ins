@@ -44,56 +44,63 @@ namespace Revit_ass_1
 
         public void Click_Show(UIDocument UiDoc, Document Doc)
         {
-
-
-
-            //using (Transaction trans = new Transaction(Doc, "Viewing Levels"))
-            //{
-            //    trans.Start();
-            //Button2 wpf = new Button2();
-            //wpf.CmbLevel_details.AllowDrop = true;
-
-
-            FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
-            viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
-
-            FilteredElementCollector wallCollector = new FilteredElementCollector(Doc);
-            wallCollector.OfClass(typeof(Autodesk.Revit.DB.Wall));
-
-            foreach (Element viewElement in viewCollector)
+            try
             {
-                Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
 
-                if (view.Title.Contains("Floor"))
+
+
+
+                //using (Transaction trans = new Transaction(Doc, "Viewing Levels"))
+                //{
+                //    trans.Start();
+                //Button2 wpf = new Button2();
+                //wpf.CmbLevel_details.AllowDrop = true;
+
+
+                FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
+                viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
+
+                FilteredElementCollector wallCollector = new FilteredElementCollector(Doc);
+                wallCollector.OfClass(typeof(Autodesk.Revit.DB.Wall));
+
+                foreach (Element viewElement in viewCollector)
                 {
-                    if (view.Name == wpf.CmbLevel_details.Text)
+                    Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
+
+                    if (view.Title.Contains("Floor"))
                     {
-                        //trans.Commit();
-
-                        UiDoc.ActiveView = view;
-                        List<ElementId> wallids=new List<ElementId>();
-                        foreach (Element wallElement in wallCollector)
+                        if (view.Name == wpf.CmbLevel_details.Text)
                         {
+                            //trans.Commit();
 
-                            //UiDoc.ActiveView.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(wallElement.Id.IntegerValue.ToString());
-                            wallids.Add(wallElement.Id);
-                            
+                            UiDoc.ActiveView = view;
+                            List<ElementId> wallids = new List<ElementId>();
+                            foreach (Element wallElement in wallCollector)
+                            {
+
+                                //UiDoc.ActiveView.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(wallElement.Id.IntegerValue.ToString());
+                                wallids.Add(wallElement.Id);
+
+                            }
+                            UiDoc.Selection.SetElementIds(wallids);
+
+                            break;
                         }
-                        UiDoc.Selection.SetElementIds(wallids);
-
-                        break;
                     }
+                    else if (wpf.CmbLevel_details.Text == "")
+                    {
+                        System.Windows.MessageBox.Show("Please Select Appropriate Level from Dropdownlist");
+                    }
+
+
+
+                    //}
                 }
-                else if (wpf.CmbLevel_details.Text == "")
-                {
-                    System.Windows.MessageBox.Show("Please Select Appropriate Level from Dropdownlist");
-                }
-
-
-
-                //}
             }
+            catch (Exception e)
+            {
 
+            }
         }
 
 
@@ -109,13 +116,13 @@ namespace Revit_ass_1
 
             FilteredElementCollector collector = new FilteredElementCollector(Doc);
             collector.OfClass(typeof(Autodesk.Revit.DB.View));
-           
-            //ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Views);
-            
 
-           
+            //ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Views);
+
+
+
             wpf.CmbLevel_details.AllowDrop = true;
-           
+
             foreach (Element viewElement in collector)
             {
                 Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;

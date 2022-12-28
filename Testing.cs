@@ -71,7 +71,7 @@ namespace Revit_ass_1
                         break;
                     }
                 }
-                else if (wpf.CmbLevel_details.Text=="")
+                else if (wpf.CmbLevel_details.Text == "")
                 {
                     System.Windows.MessageBox.Show("Please Select Appropriate Level from Dropdownlist");
                 }
@@ -90,36 +90,46 @@ namespace Revit_ass_1
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-
-            UiDoc = commandData.Application.ActiveUIDocument;
-            Doc = UiDoc.Document;
-
-            FilteredElementCollector collector = new FilteredElementCollector(Doc);
-            collector.OfClass(typeof(Autodesk.Revit.DB.View));
-            
-            //ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Levels);
-           
-            //IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
-
-         
-            wpf.CmbLevel_details.AllowDrop = true;
-            
-            foreach (Element viewElement in collector)
+            try
             {
-                Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
 
-                if (view.Title.Contains("Floor"))
+
+
+
+                UiDoc = commandData.Application.ActiveUIDocument;
+                Doc = UiDoc.Document;
+
+                FilteredElementCollector collector = new FilteredElementCollector(Doc);
+                collector.OfClass(typeof(Autodesk.Revit.DB.View));
+
+                //ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Levels);
+
+                //IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+
+
+                wpf.CmbLevel_details.AllowDrop = true;
+
+                foreach (Element viewElement in collector)
                 {
-                    wpf.CmbLevel_details.Items.Add(view.Name);
+                    Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
+
+                    if (view.Title.Contains("Floor"))
+                    {
+                        wpf.CmbLevel_details.Items.Add(view.Name);
+                    }
                 }
+                wpf.Show();
+
+                wpf.Show_Button.Click += Show_Button_Click;
+
+
+
+                return Result.Succeeded;
             }
-            wpf.Show();
-
-            wpf.Show_Button.Click += Show_Button_Click;
-
-
-
-            return Result.Succeeded;
+            catch (Exception e)
+            {
+                return Result.Failed;
+            }
         }
 
         public Document Doc { get; set; }

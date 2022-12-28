@@ -56,7 +56,7 @@ namespace Revit_ass_1
             all_details.Add(a);
             all_details.Add("Width :" + b);
             all_details.Add("Length :" + c);
-            
+
             //foreach (PropertyInfo prop in etype.GetType().GetProperties())
             //{
             //    try
@@ -90,41 +90,47 @@ namespace Revit_ass_1
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-
-            UiDoc = commandData.Application.ActiveUIDocument;
-            Doc = UiDoc.Document;
-
-
-            //pick element from user
-            pickobj = UiDoc.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element);
-
-
-            //Retrieve element
-            ElementId eleid = pickobj.ElementId;
-            ele = Doc.GetElement(eleid);
-
-
-            //Get element type
-            ElementId etypeid = ele.GetTypeId();
-            etype = Doc.GetElement(etypeid) as ElementType;
-
-
-
-            if (etype.FamilyName.Contains("Wall"))
+            try
             {
-                if (pickobj != null)
+
+                UiDoc = commandData.Application.ActiveUIDocument;
+                Doc = UiDoc.Document;
+
+
+                //pick element from user
+                pickobj = UiDoc.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element);
+
+
+                //Retrieve element
+                ElementId eleid = pickobj.ElementId;
+                ele = Doc.GetElement(eleid);
+
+
+                //Get element type
+                ElementId etypeid = ele.GetTypeId();
+                etype = Doc.GetElement(etypeid) as ElementType;
+
+
+
+                if (etype.FamilyName.Contains("Wall"))
                 {
-                    wpf.Show();
+                    if (pickobj != null)
+                    {
+                        wpf.Show();
+                    }
                 }
+                else
+                {
+                    System.Windows.MessageBox.Show("Select only walls");
+                }
+
+                wpf.Show_Button.Click += Show_Button_Click;
+
             }
-            else
+            catch (Exception e)
             {
-                System.Windows.MessageBox.Show("Select only walls");
+
             }
-
-            wpf.Show_Button.Click += Show_Button_Click;
-
-
 
             return Result.Succeeded;
         }

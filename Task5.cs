@@ -49,89 +49,105 @@ namespace Revit_ass_1
             //    trans.Start();
             //Button2 wpf = new Button2();
             //wpf.CmbLevel_details.AllowDrop = true;
-
-
-            FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
-            viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
-
-            foreach (Element viewElement in viewCollector)
+            try
             {
-                Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
 
-                if (view.Title.Contains("Floor"))
+                FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
+                viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
+
+                foreach (Element viewElement in viewCollector)
                 {
-                    if (view.Name == wpf.CmbLevel_details.Text)
+                    Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
+
+                    if (view.Title.Contains("Floor"))
                     {
-                        //trans.Commit();
+                        if (view.Name == wpf.CmbLevel_details.Text)
+                        {
+                            //trans.Commit();
 
-                        UiDoc.ActiveView = view;
+                            UiDoc.ActiveView = view;
 
-                        break;
+                            break;
+                        }
                     }
-                }
-                else if (wpf.CmbLevel_details.Text == "")
-                {
-                    System.Windows.MessageBox.Show("Please Select Appropriate Level from Dropdownlist");
-                }
+                    else if (wpf.CmbLevel_details.Text == "")
+                    {
+                        System.Windows.MessageBox.Show("Please Select Appropriate Level from Dropdownlist");
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
             }
 
         }
 
 
 
-        public void Room_List(UIDocument UiDoc,Document Doc)
+        public void Room_List(UIDocument UiDoc, Document Doc)
         {
-            FilteredElementCollector collector = new FilteredElementCollector(Doc);
-            ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Rooms);
+            try
+            {
 
-            IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+                FilteredElementCollector collector = new FilteredElementCollector(Doc);
+                ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Rooms);
+
+                IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
 
 
-            List<string> all_details = new List<string>();
-            for (int i = 0; i < floors.Count; i++)
-            {           
-                all_details.Add(floors[i].Name);              
+                List<string> all_details = new List<string>();
+                for (int i = 0; i < floors.Count; i++)
+                {
+                    all_details.Add(floors[i].Name);
+                }
+
+                var message1 = string.Join(Environment.NewLine, all_details);
+                System.Windows.MessageBox.Show(message1, "Rooms present in this view");
             }
-
-            var message1 = string.Join(Environment.NewLine, all_details);
-            System.Windows.MessageBox.Show(message1, "Rooms present in this view");
-
+            catch (Exception ex)
+            {
+            }
         }
 
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-
-            UiDoc = commandData.Application.ActiveUIDocument;
-            Doc = UiDoc.Document;
-
-            FilteredElementCollector collector = new FilteredElementCollector(Doc);
-            collector.OfClass(typeof(Autodesk.Revit.DB.View));
-
-            //ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Levels);
-
-            //IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
-
-
-            wpf.CmbLevel_details.AllowDrop = true;
-
-            foreach (Element viewElement in collector)
+            try
             {
-                Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
 
-                if (view.Title.Contains("Floor"))
+                UiDoc = commandData.Application.ActiveUIDocument;
+                Doc = UiDoc.Document;
+
+                FilteredElementCollector collector = new FilteredElementCollector(Doc);
+                collector.OfClass(typeof(Autodesk.Revit.DB.View));
+
+                //ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_Levels);
+
+                //IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
+
+
+                wpf.CmbLevel_details.AllowDrop = true;
+
+                foreach (Element viewElement in collector)
                 {
-                    wpf.CmbLevel_details.Items.Add(view.Name);
+                    Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
+
+                    if (view.Title.Contains("Floor"))
+                    {
+                        wpf.CmbLevel_details.Items.Add(view.Name);
+                    }
                 }
+                wpf.Show();
+
+                wpf.ActivatePlan.Click += ActivatePlan_Click;
+
+                wpf.RoomList.Click += RoomList_Click;
+
             }
-            wpf.Show();
-
-            wpf.ActivatePlan.Click += ActivatePlan_Click;
-
-            wpf.RoomList.Click += RoomList_Click;
-
-
+            catch (Exception ex)
+            {
+            }
 
             return Result.Succeeded;
         }
@@ -148,6 +164,6 @@ namespace Revit_ass_1
 
         public Document Doc { get; set; }
         public UIDocument UiDoc { get; set; }
-        
+
     }
 }
