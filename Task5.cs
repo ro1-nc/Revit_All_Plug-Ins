@@ -32,9 +32,9 @@ namespace Revit_ass_1
                 //PushButton pushButton = panel.AddItem(buttonData) as PushButton;
                 //pushButton.ToolTip = "my first plugin\nVersion : 1.1.0";
 
-                PushButtonData buttonData2 = new PushButtonData("cmdSecond", "Revit Second Tool", thisAssemblyPath, thisClassName);
+                PushButtonData buttonData2 = new PushButtonData("cmdFifth", "Revit Fifth Tool", thisAssemblyPath, thisClassName);
                 PushButton pushButton2 = panel.AddItem(buttonData2) as PushButton;
-                pushButton2.ToolTip = "my second plugin\nVersion : 1.1.0";
+                pushButton2.ToolTip = "my fifth plugin\nVersion : 1.1.0";
             }
             catch (Exception ex)
             {
