@@ -53,54 +53,10 @@ namespace Revit_ass_1
             UiDoc = commandData.Application.ActiveUIDocument;
             Doc = UiDoc.Document;
 
-            FilteredElementCollector collector = new FilteredElementCollector(Doc);
-            collector.OfClass(typeof(Autodesk.Revit.DB.View));
-
-            string docname = Doc.Title;
-
-            List<Element> all_elements = new List<Element>();
-
             wpf_output_data.Clear();
 
-            foreach (Element viewElement in collector)
-            {
-                Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
-                // view_types.Add(view.ViewType.ToString());
-                if (view.Title.Contains("Floor"))
-                {
-                    view_types.Add(view.ViewType.ToString());
-                    all_views.Add(view.Title);
-                    floor_plans.Add(view.Name);
-                 
-                    WallData(view);    
-
-                }
-                if (view.Title.StartsWith("Reflected Ceiling"))
-                {
-                    view_types.Add(view.ViewType.ToString());
-                    all_views.Add(view.Title);
-                    ceiling_plans.Add(view.Name);
-                    
-                    WallData(view);
-                }
-                if (view.Title.StartsWith("Elevation"))
-                {
-                    view_types.Add(view.ViewType.ToString());
-                    all_views.Add(view.Title);
-                    elevation_plans.Add(view.Name);
-                    
-                    WallData(view);
-                }
-                if (view.Title.StartsWith("3D"))
-                {
-                    view_types.Add(view.ViewType.ToString());
-                    all_views.Add(view.Title);
-                    threeD_plans.Add(view.Name);
-                    
-                    WallData(view);
-                }              
-            }
-
+            WallData();
+          
             wpf.WallsData.Text =string.Join(Environment.NewLine, wpf_output_data);
            
             wpf.Show();
@@ -108,27 +64,38 @@ namespace Revit_ass_1
             return Result.Succeeded;
         }
 
-        public void WallData(Autodesk.Revit.DB.View view)
+        public void WallData()
         {
+            
+            List<Level> levelCollection = new List<Level>();
+            FilteredElementCollector collector = new FilteredElementCollector(Doc);
+            ICollection<Element> collection = collector.OfClass(typeof(Level)).ToElements();
+
             FilteredElementCollector allElementsInView = new FilteredElementCollector(Doc, Doc.ActiveView.Id);
             IList elementsInView = (IList)allElementsInView.ToElements();
             
-            wpf_output_data.Add(view.Title);
-            foreach (Element el in elementsInView)
+            
+            foreach(Level lev in collection)
             {
-                if (view.Id.IntegerValue == el.LevelId.IntegerValue + 1)
+                wpf_output_data.Add(lev.Name);
+                //if(view.l)
+                foreach (Element el in elementsInView)
                 {
-
-                    if (el.GetType() == typeof(Wall))
+                    if (lev.Id == el.LevelId)
                     {
-                        //all_elements.Add(el);
-                        wpf_output_data.Add("   Name : " + el.Name);
-                        wpf_output_data.Add("       Width : " + ((Autodesk.Revit.DB.Wall)el).Width.ToString());
-                        wpf_output_data.Add("       Length : " + el.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsValueString());
 
+                        if (el.GetType() == typeof(Wall))
+                        {
+                            //all_elements.Add(el);
+                            wpf_output_data.Add("   Name : " + el.Name);
+                            wpf_output_data.Add("       Width : " + ((Autodesk.Revit.DB.Wall)el).Width.ToString());
+                            wpf_output_data.Add("       Length : " + el.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsValueString());
+
+                        }
                     }
                 }
             }
+            
         }
         public Document Doc { get; set; }
         public UIDocument UiDoc { get; set; }
