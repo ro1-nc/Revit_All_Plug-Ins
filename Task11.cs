@@ -19,12 +19,12 @@ namespace Revit_ass_1
 {
     [Transaction(TransactionMode.Manual)]
 
-    public class Task9 : IExternalCommand
+    public class Task11 : IExternalCommand
     {
         
         List<string> wpf_output_data = new List<string>();
 
-        Button9 wpf = new Button9();
+        Button7 wpf = new Button7();
         public static void addButton(RibbonPanel panel)
         {
             try
@@ -32,9 +32,9 @@ namespace Revit_ass_1
                 string thisClassName = MethodBase.GetCurrentMethod().DeclaringType.FullName;
                 string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
 
-                PushButtonData buttonData = new PushButtonData("cmdNineth", "Revit Nineth Tool", thisAssemblyPath, thisClassName);
+                PushButtonData buttonData = new PushButtonData("cmdEleventh", "Revit Eleventh Tool", thisAssemblyPath, thisClassName);
                 PushButton pushButton = panel.AddItem(buttonData) as PushButton;
-                pushButton.ToolTip = "my nineth plugin\nVersion : 1.1.0";
+                pushButton.ToolTip = "my eleventh plugin\nVersion : 1.1.0";
             }
             catch (Exception ex)
             {
@@ -50,49 +50,58 @@ namespace Revit_ass_1
             wpf_output_data.Clear();
 
             WallData();
-          
-            wpf.WallsData.Text =string.Join(Environment.NewLine, wpf_output_data);
-           
-            wpf.Show();
+
+            //wpf.WallsData.Text = string.Join(Environment.NewLine, wpf_output_data);
+
+            wpf.Show(); 
 
             return Result.Succeeded;
         }
 
         public void WallData()
         {
-            
+
             List<Level> levelCollection = new List<Level>();
             FilteredElementCollector collector = new FilteredElementCollector(Doc);
             ICollection<Element> collection = collector.OfClass(typeof(Level)).ToElements();
 
             FilteredElementCollector allElementsInView = new FilteredElementCollector(Doc, Doc.ActiveView.Id);
             IList elementsInView = (IList)allElementsInView.ToElements();
-            
-            
-            foreach(Level lev in collection)
+
+            Dictionary<string, int> dict = new Dictionary<string, int>();
+
+            foreach (Level lev in collection)
             {
+                TreeViewItem levels = new TreeViewItem();
+                levels.Header = lev.Name;
+                wpf.All_views.Items.Add(levels);
                 wpf_output_data.Add(lev.Name);
                 //if(view.l)
+                
                 foreach (Element el in elementsInView)
                 {
-                    if (lev.Id == el.LevelId)
+                    if(null!=el.Category && el.Category.HasMaterialQuantities)
                     {
-
-                        if (el.GetType() == typeof(Wall))
+                        if (lev.Id == el.LevelId)
                         {
-                            //all_elements.Add(el);
-                            wpf_output_data.Add("   Name : " + el.Name);
-                            wpf_output_data.Add("       Width : " + ((Autodesk.Revit.DB.Wall)el).Width.ToString());
-                            wpf_output_data.Add("       Length : " + el.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsValueString());
-
+                            wpf_output_data.Add(el.Category.Name);
+                            if (dict.ContainsKey(el.Category.Name))
+                            {
+                                dict = dict.ToDictionary(kvp => kvp.Key, kv => kv.Value + 1);
+                            }
+                            else
+                            {
+                                dict.Add(el.Category.Name, 1);
+                            }
                         }
                     }
+                    
                 }
             }
-            
+
         }
         public Document Doc { get; set; }
         public UIDocument UiDoc { get; set; }
-       
+
     }
 }
