@@ -68,6 +68,9 @@
     <Compile Include="Button7.xaml.cs">
       <DependentUpon>Button7.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Button9.xaml.cs">
+      <DependentUpon>Button9.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Class1.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="Task5.cs" />
     <Compile Include="Task6.cs" />
     <Compile Include="Task7.cs" />
+    <Compile Include="Task9.cs" />
     <Compile Include="Testing.cs" />
     <Compile Include="UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
@@ -95,6 +99,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Button7.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Button9.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

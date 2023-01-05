@@ -46,17 +46,7 @@ namespace Revit_ass_1
         {
             try
             {
-
-
-
-
-                //using (Transaction trans = new Transaction(Doc, "Viewing Levels"))
-                //{
-                //    trans.Start();
-                //Button2 wpf = new Button2();
-                //wpf.CmbLevel_details.AllowDrop = true;
-
-
+   
                 FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
                 viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
 

@@ -32,6 +32,7 @@ namespace Revit_ass_1
             RibbonPanel panel5 = null;
             RibbonPanel panel6 = null;
             RibbonPanel panel7 = null;
+            RibbonPanel panel9 = null;
 
 
             string pName = " Revit First Panel";
@@ -41,6 +42,7 @@ namespace Revit_ass_1
             string pName5 = " Revit Fifth Panel";
             string pName6 = " Revit Sixth Panel";
             string pName7 = " Revit Seventh Panel";
+            string pName9 = " Revit Nineth Panel";
             
             string ncircleTab = " Revit First Tab";
             //AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_UKAssemblyResolveFirst);
@@ -59,6 +61,7 @@ namespace Revit_ass_1
             panel5 = application.CreateRibbonPanel(ncircleTab, pName5);
             panel6 = application.CreateRibbonPanel(ncircleTab, pName6);
             panel7 = application.CreateRibbonPanel(ncircleTab, pName7);
+            panel9 = application.CreateRibbonPanel(ncircleTab, pName9);
 
             List<RibbonPanel> panels = application.GetRibbonPanels(ncircleTab);
             foreach (RibbonPanel rP in panels)
@@ -79,6 +82,7 @@ namespace Revit_ass_1
                 panel5 = application.CreateRibbonPanel(ncircleTab, pName5);
                 panel6 = application.CreateRibbonPanel(ncircleTab, pName6);
                 panel7 = application.CreateRibbonPanel(ncircleTab, pName7);
+                panel9 = application.CreateRibbonPanel(ncircleTab, pName9);
 
             }
 
@@ -89,6 +93,7 @@ namespace Revit_ass_1
             Task5.addButton(panel5);
             Task6.addButton(panel6);
             Task7.addButton(panel7);
+            Task9.addButton(panel9);
             
           
 

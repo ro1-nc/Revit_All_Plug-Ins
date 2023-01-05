@@ -28,7 +28,7 @@ namespace Revit_ass_1
         List<string> threeD_plans = new List<string>();
         List<string> view_types = new List<string>();
 
-        public dynamic PARENT_NAME;
+        
 
         Button7 wpf = new Button7();
         public static void addButton(RibbonPanel panel)
@@ -160,6 +160,7 @@ namespace Revit_ass_1
 
             foreach (string v in view_types)
             {
+                
                 TreeViewItem view_type = new TreeViewItem();
                 view_type.Header = v;
                 main.Items.Add(view_type);
@@ -191,10 +192,8 @@ namespace Revit_ass_1
                         view_type.Items.Add(item);
                     }
                 }
-                 PARENT_NAME = view_type;
+                 
                 view_type.MouseDoubleClick += View_type_MouseDoubleClick;
-
-
             }
 
             wpf.Show();
@@ -209,7 +208,6 @@ namespace Revit_ass_1
 
         public void Activate_Plan(UIDocument UiDoc, Document Doc)
         {
- 
             try
             {
 
@@ -218,6 +216,7 @@ namespace Revit_ass_1
                 FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
                 viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
 
+                bool found = false;
                 foreach (Element viewElement in viewCollector)
                 {
                     Autodesk.Revit.DB.View view = (Autodesk.Revit.DB.View)viewElement;
@@ -228,6 +227,25 @@ namespace Revit_ass_1
                         //trans.Commit();
 
                         UiDoc.ActiveView = view;
+                        found = true;
+
+                        FilteredElementCollector symcollector = new FilteredElementCollector(Doc);
+
+                        symcollector.OfCategory(BuiltInCategory.OST_Furniture);
+                        symcollector.OfClass(typeof(FamilySymbol)).Cast<FamilySymbol>().ToList();
+
+                        FamilySymbol symbol = symcollector.FirstElement() as FamilySymbol;
+
+                        try
+                        {
+
+                            UiDoc.PromptForFamilyInstancePlacement(symbol);
+
+                        }
+                        catch (Exception a)
+                        {
+
+                        }
 
                         break;
                     }
@@ -239,6 +257,12 @@ namespace Revit_ass_1
                     }
 
                 }
+                if(!found)
+                {
+                    System.Windows.MessageBox.Show("Please Select Appropriate View from Tree");
+
+                }
+
             }
             catch (Exception ex)
             {
