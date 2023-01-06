@@ -21,7 +21,7 @@ namespace Revit_ass_1
 
     public class Task11 : IExternalCommand
     {
-        
+
         List<string> wpf_output_data = new List<string>();
 
         Button7 wpf = new Button7();
@@ -41,6 +41,8 @@ namespace Revit_ass_1
             }
         }
 
+
+
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
 
@@ -53,7 +55,7 @@ namespace Revit_ass_1
 
             //wpf.WallsData.Text = string.Join(Environment.NewLine, wpf_output_data);
 
-            wpf.Show(); 
+            wpf.Show();
 
             return Result.Succeeded;
         }
@@ -68,7 +70,7 @@ namespace Revit_ass_1
             FilteredElementCollector allElementsInView = new FilteredElementCollector(Doc, Doc.ActiveView.Id);
             IList elementsInView = (IList)allElementsInView.ToElements();
 
-            Dictionary<string, int> dict = new Dictionary<string, int>();
+
 
             foreach (Level lev in collection)
             {
@@ -77,10 +79,10 @@ namespace Revit_ass_1
                 wpf.All_views.Items.Add(levels);
                 wpf_output_data.Add(lev.Name);
                 //if(view.l)
-                
+                Dictionary<string, int> dict = new Dictionary<string, int>();
                 foreach (Element el in elementsInView)
                 {
-                    if(null!=el.Category && el.Category.HasMaterialQuantities)
+                    if (null != el.Category && el.Category.HasMaterialQuantities)
                     {
                         if (lev.Id == el.LevelId)
                         {
@@ -95,11 +97,102 @@ namespace Revit_ass_1
                             }
                         }
                     }
-                    
+                }
+                foreach (KeyValuePair<string, int> entry in dict)
+                {
+                    TreeViewItem elementss = new TreeViewItem();
+                    elementss.Header = string.Format("{0}" + "(" + "{1}" + ")", entry.Key, entry.Value);
+                    levels.Items.Add(elementss);
+
+                    elementss.MouseDoubleClick += Elementss_MouseDoubleClick;
                 }
             }
 
         }
+
+        public void Highlight_Element(UIDocument UiDoc, Document Doc)
+        {
+            try
+            {
+
+                string selected = wpf.All_views.SelectedItem.ToString();
+
+                List<Level> levelCollection = new List<Level>();
+                FilteredElementCollector collector = new FilteredElementCollector(Doc);
+                ICollection<Element> collection = collector.OfClass(typeof(Level)).ToElements();
+
+                FilteredElementCollector allElementsInView = new FilteredElementCollector(Doc, Doc.ActiveView.Id);
+                IList elementsInView = (IList)allElementsInView.ToElements();
+
+
+                List<ElementId> wallids = new List<ElementId>();
+                try
+                {
+                    foreach (Element elem in elementsInView)
+                    {
+                        try
+                        {
+                            if (selected.Contains(elem.Category.Name))
+                            {
+                                wallids.Add(elem.Id);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+
+                Element elemt = Doc.GetElement(wallids.First());
+
+                bool found = false;
+                foreach (Level lev in collection)
+                {
+
+                    if (lev.Id == elemt.LevelId)
+                    {
+                        FilteredElementCollector viewCollector = new FilteredElementCollector(Doc);
+                        viewCollector.OfClass(typeof(Autodesk.Revit.DB.View));
+
+                        foreach (Autodesk.Revit.DB.View v in viewCollector)
+                        {
+                            if (v.Title.Contains("Floor"))
+                            {
+                                if (v.Name == lev.Name)
+                                {
+                                    UiDoc.ActiveView = v;
+                                    UiDoc.Selection.SetElementIds(wallids);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (selected == "")
+                        {
+                            System.Windows.MessageBox.Show("Please Select Appropriate View from Dropdownlist");
+                            break;
+                        }
+                    }
+                }
+                if (!found)
+                {
+                    System.Windows.MessageBox.Show("Please Select Appropriate View from Tree");
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void Elementss_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Highlight_Element(UiDoc, Doc);
+        }
+
         public Document Doc { get; set; }
         public UIDocument UiDoc { get; set; }
 
