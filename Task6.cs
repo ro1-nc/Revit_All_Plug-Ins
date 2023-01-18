@@ -24,7 +24,9 @@ namespace Revit_ass_1
 
         Button4 wpf = new Button4();
 
-        public Reference pickobj { get; set; }
+       
+
+        List<string> all_details = new List<string>();
         //public selection pickobj { get; set; }
         public ElementType etype { get; set; }
         public Element ele { get; set; }
@@ -47,48 +49,7 @@ namespace Revit_ass_1
             {
             }
         }
-
-        public void Click_Show(UIDocument UiDoc, Document Doc)
-        {
-            List<string> all_details = new List<string>();
-
-            string a = etype.Name;
-            string b = ((Autodesk.Revit.DB.WallType)etype).Width.ToString();
-            string c = ele.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsValueString();
-            all_details.Add(a);
-            all_details.Add("Width :" + b);
-            all_details.Add("Length :" + c);
-
-            //foreach (PropertyInfo prop in etype.GetType().GetProperties())
-            //{
-            //    try
-            //    {
-            //        string pName = prop.Name;
-            //        dynamic pValue;
-            //        if (pName == "Name")
-            //        {
-            //            pValue = etype.Name;
-            //        }
-            //        else
-            //        {
-            //            pValue = prop.GetValue(etype);
-
-            //        }
-            //        all_details.Add(pName + " = " + pValue);
-            //    }
-            //    catch (Exception e)
-            //    {
-
-            //    }
-
-            //}
-
-            var message1 = string.Join(Environment.NewLine, all_details);
-
-            System.Windows.MessageBox.Show(message1);
-
-        }
-
+     
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -122,8 +83,8 @@ namespace Revit_ass_1
 
                 IList<Element> floors = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements();
 
-               
 
+                
                 IList<Subelement> walls = new List<Subelement>(); 
                 foreach (Room r in rooms)
                 {
@@ -134,47 +95,45 @@ namespace Revit_ass_1
                         foreach (BoundarySegment bs in boundary[0])
                         {
                             Element eFromString = Doc.GetElement(bs.ElementId);
-                            string a = eFromString.Name;
+                            all_details.Add(eFromString.Name);
                         }
 
                     }
                         
                 }
-                
+
                 //Above code is sufficient
                 //Comment below code
-                
-
                 //foreach (Wall w in filter)
                 //{
 
                 //}
 
                 //Retrieve element
-                ElementId eleid = pickobj.ElementId;
-                ele = Doc.GetElement(eleid);
+                //ElementId eleid = pickobj.ElementId;
+                //ele = Doc.GetElement(eleid);
 
 
-                //Get element type
-                ElementId etypeid = ele.GetTypeId();
-                etype = Doc.GetElement(etypeid) as ElementType;
+                ////Get element type
+                //ElementId etypeid = ele.GetTypeId();
+                //etype = Doc.GetElement(etypeid) as ElementType;
 
 
 
-                if (etype.FamilyName.Contains("Wall"))
-                {
-                    if (pickobj != null)
-                    {
-                        wpf.Show();
-                    }
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("Select only walls");
-                }
+                //if (etype.FamilyName.Contains("Wall"))
+                //{
+                //    if (pickobj != null)
+                //    {
+                //        wpf.Show();
+                //    }
+                //}
+                //else
+                //{
+                //    System.Windows.MessageBox.Show("Select only walls");
+                //}
 
-                wpf.Show_Button.Click += Show_Button_Click;
-
+                //wpf.Show_Button.Click += Show_Button_Click;
+                System.Windows.MessageBox.Show(string.Join(Environment.NewLine, all_details),"List of walls");
             }
             catch (Exception e)
             {
@@ -186,9 +145,6 @@ namespace Revit_ass_1
 
         public Document Doc { get; set; }
         public UIDocument UiDoc { get; set; }
-        public void Show_Button_Click(object sender, RoutedEventArgs e)
-        {
-            Click_Show(UiDoc, Doc);
-        }
+       
     }
 }
